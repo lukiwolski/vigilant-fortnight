@@ -1,12 +1,11 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
+var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Random = require("bs-platform/lib/js/random.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function card(isFlipped, isMatched) {
   return Css.style(/* :: */[
@@ -14,28 +13,16 @@ function card(isFlipped, isMatched) {
               /* :: */[
                 Css.backgroundColor(isMatched ? Css.green : Css.transparent),
                 /* :: */[
-                  Css.display(Css.flexBox),
+                  Css.backgroundPosition(Css.pct(50), Css.pct(50)),
                   /* :: */[
-                    Css.alignItems(Css.center),
-                    /* :: */[
-                      Css.justifyContent(Css.center),
-                      /* :: */[
-                        Css.flexBasis(Css.pct(21)),
-                        /* :: */[
-                          Css.margin(Css.px(16)),
+                    Css.firstChild(/* :: */[
+                          Css.gridRow(1, 1),
                           /* :: */[
-                            Css.width(Css.px(140)),
-                            /* :: */[
-                              Css.height(Css.px(140)),
-                              /* :: */[
-                                Css.backgroundPosition(Css.pct(50), Css.pct(50)),
-                                /* [] */0
-                              ]
-                            ]
+                            Css.gridColumn(1, 1),
+                            /* [] */0
                           ]
-                        ]
-                      ]
-                    ]
+                        ]),
+                    /* [] */0
                   ]
                 ]
               ]
@@ -43,10 +30,64 @@ function card(isFlipped, isMatched) {
 }
 
 var cardContainer = Css.style(/* :: */[
-      Css.display(Css.flexBox),
+      Css.display(/* grid */-999565626),
       /* :: */[
-        Css.flexWrap(Css.wrap),
-        /* [] */0
+        Css.gridTemplateColumns(/* :: */[
+              /* `repeat */[
+                108828507,
+                /* tuple */[
+                  /* autoFill */652328338,
+                  /* `minmax */[
+                    -754859950,
+                    /* tuple */[
+                      /* `rem */[
+                        5691738,
+                        12
+                      ],
+                      Css.fr(1)
+                    ]
+                  ]
+                ]
+              ],
+              /* [] */0
+            ]),
+        /* :: */[
+          Css.unsafe("grid-auto-rows", "1fr"),
+          /* :: */[
+            Css.gridGap(Css.px(8)),
+            /* :: */[
+              Css.maxWidth(Css.px(824)),
+              /* :: */[
+                Css.marginLeft(/* auto */-1065951377),
+                /* :: */[
+                  Css.marginRight(/* auto */-1065951377),
+                  /* :: */[
+                    Css.before(/* :: */[
+                          Css.contentRule(""),
+                          /* :: */[
+                            Css.width(Css.zero),
+                            /* :: */[
+                              Css.paddingBottom(/* `percent */[
+                                    -119887163,
+                                    100
+                                  ]),
+                              /* :: */[
+                                Css.gridRow(1, 1),
+                                /* :: */[
+                                  Css.gridColumn(1, 1),
+                                  /* [] */0
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]),
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
       ]
     ]);
 
@@ -55,62 +96,152 @@ var Styles = {
   cardContainer: cardContainer
 };
 
-function randomizeOrder(elements) {
-  return List.map((function (prim) {
-                return prim[1];
-              }), List.sort(Caml_obj.caml_compare, List.map((function (c) {
-                        return /* tuple */[
-                                Random.bits(/* () */0),
-                                c
-                              ];
-                      }), elements)));
-}
-
-function makeCards(images) {
-  return List.map((function (image) {
-                return /* record */[
-                        /* image */image,
-                        /* isFlipped */false,
-                        /* isMatched */false
-                      ];
-              }), images);
-}
+var initialLastRevealed = /* tuple */[
+  -1,
+  ""
+];
 
 function CardsPanel(Props) {
-  var imageData = Props.imageData;
-  var cards = makeCards(randomizeOrder(List.append(imageData, imageData)));
+  var items = Props.items;
   var match = React.useReducer((function (state, action) {
-          if (action) {
-            return List.mapi((function (n, card) {
-                          return card;
-                        }), state);
-          } else {
-            throw [
-                  Caml_builtin_exceptions.match_failure,
-                  /* tuple */[
-                    "CardsPanel.re",
-                    50,
-                    8
-                  ]
-                ];
+          switch (action.tag | 0) {
+            case /* Match */0 :
+                var id = action[0];
+                return /* record */[
+                        /* cards */$$Array.map((function (card) {
+                                var match = card[/* image */0][/* id */0] === id;
+                                if (match) {
+                                  return /* record */[
+                                          /* image */card[/* image */0],
+                                          /* isFlipped */true,
+                                          /* isMatched */true
+                                        ];
+                                } else {
+                                  return card;
+                                }
+                              }), state[/* cards */0]),
+                        /* lastRevealed */initialLastRevealed,
+                        /* isLocked */state[/* isLocked */2]
+                      ];
+            case /* Mismatch */1 :
+                var index = action[1];
+                var lastIndex = action[0];
+                return /* record */[
+                        /* cards */$$Array.mapi((function (i, card) {
+                                var match = i === index || i === lastIndex;
+                                if (match) {
+                                  return /* record */[
+                                          /* image */card[/* image */0],
+                                          /* isFlipped */false,
+                                          /* isMatched */card[/* isMatched */2]
+                                        ];
+                                } else {
+                                  return card;
+                                }
+                              }), state[/* cards */0]),
+                        /* lastRevealed */initialLastRevealed,
+                        /* isLocked */undefined
+                      ];
+            case /* Reveal */2 :
+                var index$1 = action[0];
+                return /* record */[
+                        /* cards */$$Array.mapi((function (i, card) {
+                                var match = i === index$1;
+                                if (match) {
+                                  return /* record */[
+                                          /* image */card[/* image */0],
+                                          /* isFlipped */true,
+                                          /* isMatched */card[/* isMatched */2]
+                                        ];
+                                } else {
+                                  return card;
+                                }
+                              }), state[/* cards */0]),
+                        /* lastRevealed : tuple */[
+                          index$1,
+                          action[1]
+                        ],
+                        /* isLocked */action[2]
+                      ];
+            case /* Hide */3 :
+                var index$2 = action[0];
+                return /* record */[
+                        /* cards */$$Array.mapi((function (i, card) {
+                                var match = index$2 === i;
+                                if (match) {
+                                  return /* record */[
+                                          /* image */card[/* image */0],
+                                          /* isFlipped */false,
+                                          /* isMatched */card[/* isMatched */2]
+                                        ];
+                                } else {
+                                  return card;
+                                }
+                              }), state[/* cards */0]),
+                        /* lastRevealed */initialLastRevealed,
+                        /* isLocked */state[/* isLocked */2]
+                      ];
+            
           }
-        }), cards);
-  return React.createElement("div", undefined, $$Array.of_list(List.mapi((function (index, param) {
-                        var image = param[/* image */0];
-                        return React.createElement("div", {
-                                    key: "" + (String(image[/* id */0]) + ("-" + (String(index) + ""))),
-                                    className: card(param[/* isFlipped */1], param[/* isMatched */2]),
-                                    style: {
-                                      backgroundImage: "url(" + (String(image[/* source */1]) + ")")
+        }), /* record */[
+        /* cards */items,
+        /* lastRevealed */initialLastRevealed,
+        /* isLocked */undefined
+      ]);
+  var match$1 = match[0];
+  var lastRevealed = match$1[/* lastRevealed */1];
+  var lastId = lastRevealed[1];
+  var lastIndex = lastRevealed[0];
+  var dispatch = match[1];
+  var isLocked = match$1[/* isLocked */2];
+  return React.createElement("div", {
+              className: cardContainer
+            }, $$Array.mapi((function (index, param) {
+                    var isMatched = param[/* isMatched */2];
+                    var match = param[/* image */0];
+                    var id = match[/* id */0];
+                    return React.createElement("button", {
+                                key: "" + (String(id) + ("-" + (String(index) + ""))),
+                                className: card(param[/* isFlipped */1], isMatched),
+                                style: {
+                                  backgroundImage: "url(" + (String(match[/* source */1]) + ")")
+                                },
+                                disabled: isMatched || isLocked === true,
+                                onClick: (function (_event) {
+                                    var match = lastIndex === index;
+                                    var match$1 = lastId === id;
+                                    var match$2 = Caml_obj.caml_equal(lastRevealed, initialLastRevealed);
+                                    if (match) {
+                                      return Curry._1(dispatch, /* Hide */Block.__(3, [index]));
+                                    } else if (match$1) {
+                                      return Curry._1(dispatch, /* Match */Block.__(0, [id]));
+                                    } else if (match$2) {
+                                      return Curry._1(dispatch, /* Reveal */Block.__(2, [
+                                                    index,
+                                                    id,
+                                                    undefined
+                                                  ]));
+                                    } else {
+                                      setTimeout((function (param) {
+                                              return Curry._1(dispatch, /* Mismatch */Block.__(1, [
+                                                            lastIndex,
+                                                            index
+                                                          ]));
+                                            }), 1000);
+                                      return Curry._1(dispatch, /* Reveal */Block.__(2, [
+                                                    index,
+                                                    id,
+                                                    true
+                                                  ]));
                                     }
-                                  }, image[/* source */1]);
-                      }), match[0])));
+                                  })
+                              }, String(index + 1 | 0));
+                  }), match$1[/* cards */0]));
 }
 
 var make = CardsPanel;
 
 exports.Styles = Styles;
-exports.randomizeOrder = randomizeOrder;
-exports.makeCards = makeCards;
+exports.initialLastRevealed = initialLastRevealed;
 exports.make = make;
 /* cardContainer Not a pure module */

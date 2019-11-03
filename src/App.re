@@ -21,7 +21,10 @@ let make = () => {
 
   let images =
     switch (imageData) {
-    | Some(imageData) => <CardsPanel imageData />
+    | Some(imageData) =>
+      <CardsPanel
+        items={CardsPanelUtils.deriveCardsFromImageData(imageData)}
+      />
     | None => React.string("Loading...")
     };
 

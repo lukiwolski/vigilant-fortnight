@@ -4,6 +4,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var GetImages$ReasonReactExamples = require("./GetImages.bs.js");
 var CardsPanel$ReasonReactExamples = require("./CardsPanel/CardsPanel.bs.js");
+var CardsPanelUtils$ReasonReactExamples = require("./CardsPanel/CardsPanelUtils.bs.js");
 
 function App(Props) {
   var match = React.useState((function () {
@@ -25,7 +26,7 @@ function App(Props) {
         }), ([]));
   if (imageData !== undefined) {
     return React.createElement(CardsPanel$ReasonReactExamples.make, {
-                imageData: imageData
+                items: CardsPanelUtils$ReasonReactExamples.deriveCardsFromImageData(imageData)
               });
   } else {
     return "Loading...";
