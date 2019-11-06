@@ -7,22 +7,88 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 
-function card(isFlipped, isMatched) {
+function card(isFlipped) {
+  var match = !isFlipped;
+  var match$1 = !isFlipped;
   return Css.style(/* :: */[
-              Css.backgroundSize(isFlipped ? Css.cover : Css.size(Css.px(0), Css.px(0))),
-              /* :: */[
-                Css.backgroundColor(isMatched ? Css.green : Css.transparent),
-                /* :: */[
-                  Css.backgroundPosition(Css.pct(50), Css.pct(50)),
-                  /* :: */[
-                    Css.firstChild(/* :: */[
-                          Css.gridRow(1, 1),
-                          /* :: */[
-                            Css.gridColumn(1, 1),
-                            /* [] */0
-                          ]
-                        ]),
+              Css.focus(/* :: */[
+                    Css.outlineColor(Css.transparent),
                     /* [] */0
+                  ]),
+              /* :: */[
+                Css.firstChild(/* :: */[
+                      Css.gridRow(1, 1),
+                      /* :: */[
+                        Css.gridColumn(1, 1),
+                        /* [] */0
+                      ]
+                    ]),
+                /* :: */[
+                  Css.position(Css.relative),
+                  /* :: */[
+                    Css.transformStyle(/* preserve3d */589702045),
+                    /* :: */[
+                      Css.unsafe("transform-origin", "center right"),
+                      /* :: */[
+                        Css.unsafe("transition", "transform .3s"),
+                        /* :: */[
+                          Css.border(Css.px(2), Css.solid, Css.black),
+                          /* :: */[
+                            Css.borderRadius(Css.px(8)),
+                            /* :: */[
+                              Css.transforms(/* :: */[
+                                    /* `translateX */[
+                                      106728778,
+                                      Css.pct(match ? -100 : 0)
+                                    ],
+                                    /* :: */[
+                                      /* `rotateY */[
+                                        -249738850,
+                                        Css.deg(match$1 ? -180 : 0)
+                                      ],
+                                      /* [] */0
+                                    ]
+                                  ]),
+                              /* :: */[
+                                Css.unsafe("background-image", "linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a),\n  linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);\n  background-size:80px 140px;\n  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;"),
+                                /* [] */0
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function cardFace(param) {
+  return Css.style(/* :: */[
+              Css.position(Css.absolute),
+              /* :: */[
+                Css.width(Css.pct(100)),
+                /* :: */[
+                  Css.height(Css.pct(100)),
+                  /* :: */[
+                    Css.backfaceVisibility(Css.hidden),
+                    /* :: */[
+                      Css.backgroundPosition(Css.pct(50), Css.pct(50)),
+                      /* :: */[
+                        Css.backgroundSize(Css.cover),
+                        /* :: */[
+                          Css.left(Css.px(0)),
+                          /* :: */[
+                            Css.top(Css.px(0)),
+                            /* :: */[
+                              Css.borderRadius(Css.px(8)),
+                              /* [] */0
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
                   ]
                 ]
               ]
@@ -93,6 +159,7 @@ var cardContainer = Css.style(/* :: */[
 
 var Styles = {
   card: card,
+  cardFace: cardFace,
   cardContainer: cardContainer
 };
 
@@ -197,16 +264,12 @@ function CardsPanel(Props) {
   return React.createElement("div", {
               className: cardContainer
             }, $$Array.mapi((function (index, param) {
-                    var isMatched = param[/* isMatched */2];
                     var match = param[/* image */0];
                     var id = match[/* id */0];
                     return React.createElement("button", {
                                 key: "" + (String(id) + ("-" + (String(index) + ""))),
-                                className: card(param[/* isFlipped */1], isMatched),
-                                style: {
-                                  backgroundImage: "url(" + (String(match[/* source */1]) + ")")
-                                },
-                                disabled: isMatched || isLocked === true,
+                                className: card(param[/* isFlipped */1]),
+                                disabled: param[/* isMatched */2] || isLocked === true,
                                 onClick: (function (_event) {
                                     var match = lastIndex === index;
                                     var match$1 = lastId === id;
@@ -235,7 +298,12 @@ function CardsPanel(Props) {
                                                   ]));
                                     }
                                   })
-                              }, String(index + 1 | 0));
+                              }, React.createElement("div", {
+                                    className: cardFace(/* () */0),
+                                    style: {
+                                      backgroundImage: "url(" + (String(match[/* source */1]) + ")")
+                                    }
+                                  }));
                   }), match$1[/* cards */0]));
 }
 

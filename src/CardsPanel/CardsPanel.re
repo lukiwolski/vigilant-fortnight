@@ -21,12 +21,44 @@ type state = {
 module Styles = {
   open Css;
 
-  let card = (~isFlipped, ~isMatched) =>
+  let card = (~isFlipped) =>
     style([
-      backgroundSize(isFlipped ? cover : size(0 |> px, 0 |> px)),
-      backgroundColor(isMatched ? green : transparent),
-      backgroundPosition(50. |> pct, 50. |> pct),
+      focus([outlineColor(transparent)]),
       firstChild([gridRow(1, 1), gridColumn(1, 1)]),
+      position(relative),
+      transformStyle(`preserve3d),
+      unsafe("transform-origin", "center right"),
+      unsafe("transition", "transform .3s"),
+      border(2 |> px, solid, black),
+      borderRadius(8 |> px),
+      transforms([
+        `translateX((!isFlipped ? (-100.) : 0.) |> pct),
+        `rotateY((!isFlipped ? (-180.) : 0.) |> deg),
+      ]),
+      unsafe(
+        "background-image",
+        "linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+  linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+  linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+  linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+  linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a),
+  linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);
+  background-size:80px 140px;
+  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;",
+      ),
+    ]);
+
+  let cardFace = () =>
+    style([
+      position(absolute),
+      width(100. |> pct),
+      height(100. |> pct),
+      backfaceVisibility(hidden),
+      backgroundPosition(50. |> pct, 50. |> pct),
+      backgroundSize(cover),
+      left(0 |> px),
+      top(0 |> px),
+      borderRadius(8 |> px),
     ]);
 
   let cardContainer =
@@ -125,12 +157,14 @@ let make = (~items: array(card)) => {
                 dispatch(Reveal(index, id, Some(true)));
               }
             }
-            className={Styles.card(~isFlipped, ~isMatched)}
-            style={ReactDOMRe.Style.make(
-              ~backgroundImage={j|url($source)|j},
-              (),
-            )}>
-            {React.string(string_of_int(index + 1))}
+            className={Styles.card(~isFlipped)}>
+            <div
+              className={Styles.cardFace()}
+              style={ReactDOMRe.Style.make(
+                ~backgroundImage={j|url($source)|j},
+                (),
+              )}
+            />
           </button>
         )
      |> React.array}
