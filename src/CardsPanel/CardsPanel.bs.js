@@ -1,99 +1,13 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-
-function card(isFlipped) {
-  var match = !isFlipped;
-  var match$1 = !isFlipped;
-  return Css.style(/* :: */[
-              Css.focus(/* :: */[
-                    Css.outlineColor(Css.transparent),
-                    /* [] */0
-                  ]),
-              /* :: */[
-                Css.firstChild(/* :: */[
-                      Css.gridRow(1, 1),
-                      /* :: */[
-                        Css.gridColumn(1, 1),
-                        /* [] */0
-                      ]
-                    ]),
-                /* :: */[
-                  Css.position(Css.relative),
-                  /* :: */[
-                    Css.transformStyle(/* preserve3d */589702045),
-                    /* :: */[
-                      Css.unsafe("transform-origin", "center right"),
-                      /* :: */[
-                        Css.unsafe("transition", "transform .3s"),
-                        /* :: */[
-                          Css.border(Css.px(2), Css.solid, Css.black),
-                          /* :: */[
-                            Css.borderRadius(Css.px(8)),
-                            /* :: */[
-                              Css.transforms(/* :: */[
-                                    /* `translateX */[
-                                      106728778,
-                                      Css.pct(match ? -100 : 0)
-                                    ],
-                                    /* :: */[
-                                      /* `rotateY */[
-                                        -249738850,
-                                        Css.deg(match$1 ? -180 : 0)
-                                      ],
-                                      /* [] */0
-                                    ]
-                                  ]),
-                              /* :: */[
-                                Css.unsafe("background-image", "linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),\n  linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a),\n  linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);\n  background-size:80px 140px;\n  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;"),
-                                /* [] */0
-                              ]
-                            ]
-                          ]
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]);
-}
-
-function cardFace(param) {
-  return Css.style(/* :: */[
-              Css.position(Css.absolute),
-              /* :: */[
-                Css.width(Css.pct(100)),
-                /* :: */[
-                  Css.height(Css.pct(100)),
-                  /* :: */[
-                    Css.backfaceVisibility(Css.hidden),
-                    /* :: */[
-                      Css.backgroundPosition(Css.pct(50), Css.pct(50)),
-                      /* :: */[
-                        Css.backgroundSize(Css.cover),
-                        /* :: */[
-                          Css.left(Css.px(0)),
-                          /* :: */[
-                            Css.top(Css.px(0)),
-                            /* :: */[
-                              Css.borderRadius(Css.px(8)),
-                              /* [] */0
-                            ]
-                          ]
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]);
-}
+var Card$ReasonReactExamples = require("./Card.bs.js");
 
 var cardContainer = Css.style(/* :: */[
       Css.display(/* grid */-999565626),
@@ -157,10 +71,41 @@ var cardContainer = Css.style(/* :: */[
       ]
     ]);
 
+var cardWrapper = Css.style(/* :: */[
+      Css.focus(/* :: */[
+            Css.outlineColor(Css.transparent),
+            /* [] */0
+          ]),
+      /* :: */[
+        Css.firstChild(/* :: */[
+              Css.gridRow(1, 1),
+              /* :: */[
+                Css.gridColumn(1, 1),
+                /* [] */0
+              ]
+            ]),
+        /* :: */[
+          Css.position(Css.relative),
+          /* :: */[
+            Css.borderRadius(Css.px(8)),
+            /* :: */[
+              Css.overflow(Css.hidden),
+              /* :: */[
+                Css.border(Css.px(0), /* none */-922086728, Css.transparent),
+                /* :: */[
+                  Css.backgroundColor(Css.transparent),
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
 var Styles = {
-  card: card,
-  cardFace: cardFace,
-  cardContainer: cardContainer
+  cardContainer: cardContainer,
+  cardWrapper: cardWrapper
 };
 
 var initialLastRevealed = /* tuple */[
@@ -174,21 +119,26 @@ function CardsPanel(Props) {
           switch (action.tag | 0) {
             case /* Match */0 :
                 var id = action[0];
+                var cards = $$Array.map((function (card) {
+                        var match = card[/* image */0][/* id */0] === id;
+                        if (match) {
+                          return /* record */[
+                                  /* image */card[/* image */0],
+                                  /* isFlipped */true,
+                                  /* isMatched */true
+                                ];
+                        } else {
+                          return card;
+                        }
+                      }), state[/* cards */0]);
+                var isCompleted = List.for_all((function (card) {
+                        return card[/* isMatched */2];
+                      }), $$Array.to_list(cards));
                 return /* record */[
-                        /* cards */$$Array.map((function (card) {
-                                var match = card[/* image */0][/* id */0] === id;
-                                if (match) {
-                                  return /* record */[
-                                          /* image */card[/* image */0],
-                                          /* isFlipped */true,
-                                          /* isMatched */true
-                                        ];
-                                } else {
-                                  return card;
-                                }
-                              }), state[/* cards */0]),
+                        /* cards */cards,
                         /* lastRevealed */initialLastRevealed,
-                        /* isLocked */state[/* isLocked */2]
+                        /* isLocked */state[/* isLocked */2],
+                        /* isCompleted */isCompleted
                       ];
             case /* Mismatch */1 :
                 var index = action[1];
@@ -207,7 +157,8 @@ function CardsPanel(Props) {
                                 }
                               }), state[/* cards */0]),
                         /* lastRevealed */initialLastRevealed,
-                        /* isLocked */undefined
+                        /* isLocked */undefined,
+                        /* isCompleted */state[/* isCompleted */3]
                       ];
             case /* Reveal */2 :
                 var index$1 = action[0];
@@ -228,7 +179,8 @@ function CardsPanel(Props) {
                           index$1,
                           action[1]
                         ],
-                        /* isLocked */action[2]
+                        /* isLocked */action[2],
+                        /* isCompleted */state[/* isCompleted */3]
                       ];
             case /* Hide */3 :
                 var index$2 = action[0];
@@ -246,14 +198,16 @@ function CardsPanel(Props) {
                                 }
                               }), state[/* cards */0]),
                         /* lastRevealed */initialLastRevealed,
-                        /* isLocked */state[/* isLocked */2]
+                        /* isLocked */state[/* isLocked */2],
+                        /* isCompleted */state[/* isCompleted */3]
                       ];
             
           }
         }), /* record */[
         /* cards */items,
         /* lastRevealed */initialLastRevealed,
-        /* isLocked */undefined
+        /* isLocked */undefined,
+        /* isCompleted */undefined
       ]);
   var match$1 = match[0];
   var lastRevealed = match$1[/* lastRevealed */1];
@@ -261,24 +215,25 @@ function CardsPanel(Props) {
   var lastIndex = lastRevealed[0];
   var dispatch = match[1];
   var isLocked = match$1[/* isLocked */2];
+  var match$2 = match$1[/* isCompleted */3] === true;
   return React.createElement("div", {
               className: cardContainer
             }, $$Array.mapi((function (index, param) {
                     var match = param[/* image */0];
                     var id = match[/* id */0];
+                    var sameItem = lastIndex === index;
+                    var matchingItems = lastId === id;
+                    var isSameRevealed = Caml_obj.caml_equal(lastRevealed, initialLastRevealed);
                     return React.createElement("button", {
                                 key: "" + (String(id) + ("-" + (String(index) + ""))),
-                                className: card(param[/* isFlipped */1]),
+                                className: cardWrapper,
                                 disabled: param[/* isMatched */2] || isLocked === true,
                                 onClick: (function (_event) {
-                                    var match = lastIndex === index;
-                                    var match$1 = lastId === id;
-                                    var match$2 = Caml_obj.caml_equal(lastRevealed, initialLastRevealed);
-                                    if (match) {
+                                    if (sameItem) {
                                       return Curry._1(dispatch, /* Hide */Block.__(3, [index]));
-                                    } else if (match$1) {
+                                    } else if (matchingItems) {
                                       return Curry._1(dispatch, /* Match */Block.__(0, [id]));
-                                    } else if (match$2) {
+                                    } else if (isSameRevealed) {
                                       return Curry._1(dispatch, /* Reveal */Block.__(2, [
                                                     index,
                                                     id,
@@ -298,13 +253,11 @@ function CardsPanel(Props) {
                                                   ]));
                                     }
                                   })
-                              }, React.createElement("div", {
-                                    className: cardFace(/* () */0),
-                                    style: {
-                                      backgroundImage: "url(" + (String(match[/* source */1]) + ")")
-                                    }
+                              }, React.createElement(Card$ReasonReactExamples.make, {
+                                    faceSource: match[/* source */1],
+                                    isFlipped: param[/* isFlipped */1]
                                   }));
-                  }), match$1[/* cards */0]));
+                  }), match$1[/* cards */0]), match$2 ? "Hooray good job" : null);
 }
 
 var make = CardsPanel;
