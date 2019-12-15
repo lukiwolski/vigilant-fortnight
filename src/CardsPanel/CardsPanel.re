@@ -29,10 +29,8 @@ module Styles = {
         `repeat((`autoFill, `minmax((`rem(12.), 1. |> fr)))),
       ]),
       unsafe("grid-auto-rows", "1fr"),
-      gridGap(8 |> px),
+      gridGap(18 |> px),
       maxWidth(824 |> px),
-      marginLeft(`auto),
-      marginRight(`auto),
       before([
         contentRule(""),
         width(zero),
@@ -40,6 +38,7 @@ module Styles = {
         gridRow(1, 1),
         gridColumn(1, 1),
       ]),
+      media("screen and (min-width: 768px)", [gridGap(12 |> px)]),
     ]);
 
   let cardWrapper =
@@ -57,7 +56,7 @@ module Styles = {
 let initialLastRevealed = ((-1), "");
 
 [@react.component]
-let make = (~items: array(card)) => {
+let make = (~cards: array(card)) => {
   let ({cards, lastRevealed, isLocked, isCompleted}, dispatch) =
     React.useReducer(
       (state, action) =>
@@ -107,7 +106,7 @@ let make = (~items: array(card)) => {
           }
         },
       {
-        cards: items,
+        cards,
         lastRevealed: initialLastRevealed,
         isLocked: None,
         isCompleted: None,
